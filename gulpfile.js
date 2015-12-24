@@ -1,11 +1,21 @@
 var gulp = require('gulp');
 var typescript = require('gulp-typescript');
-var uglify = require('gulp-uglify')
-var rename = require('gulp-rename')
+var header = require('gulp-header');
+var uglify = require('gulp-uglify');
+var rename = require('gulp-rename');
 var webserver = require('gulp-webserver');
 var testApi = require('./test/api/api');
 
-gulp.task('default', ['watch', 'test']);
+var pkg = require('./package.json');
+
+var banner = ['/*!',
+  ' * <%= pkg.name %> v<%= pkg.version %> - <%= pkg.description %>',
+  ' * Copyright 2015 <%= pkg.author %>',
+  ' * license <%= pkg.license %>',
+  ' */',
+  ''].join('\n');
+
+gulp.task('default', ['test']);
 
 gulp.task('watch', ['scripts'], function() {
 
@@ -14,11 +24,12 @@ gulp.task('watch', ['scripts'], function() {
 
 gulp.task('scripts', function() {
 
-  gulp.src('src/**/*.ts')
+  return gulp.src('src/**/*.ts')
     .pipe(typescript({
       target: 'ES5',
       out: 'jquery-resource.js'
     }))
+    .pipe(header(banner, {pkg: pkg}))
     .pipe(gulp.dest('release'))
     .pipe(uglify({
       preserveComments: 'some'
@@ -27,7 +38,7 @@ gulp.task('scripts', function() {
     .pipe(gulp.dest('release'));
 });
 
-gulp.task('test', function() {
+gulp.task('test', ['watch'], function() {
 
   gulp.src('./')
     .pipe(webserver({

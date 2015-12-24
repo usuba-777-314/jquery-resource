@@ -1,3 +1,8 @@
+/*!
+ * jquery-resource v0.0.1 - support for RESTful.
+ * Copyright 2015 Hironobu Igawa
+ * license MIT
+ */
 var resource;
 (function (resource) {
     'use strict';
