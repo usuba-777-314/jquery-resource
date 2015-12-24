@@ -1,5 +1,7 @@
 var gulp = require('gulp');
-var ts = require('gulp-typescript');
+var typescript = require('gulp-typescript');
+var uglify = require('gulp-uglify')
+var rename = require('gulp-rename')
 var webserver = require('gulp-webserver');
 var testApi = require('./test/api/api');
 
@@ -12,14 +14,17 @@ gulp.task('watch', ['scripts'], function() {
 
 gulp.task('scripts', function() {
 
-  var tsConfig = {
-    target: 'ES5',
-    out: "jquery-resource.js"
-  };
-
-  gulp.src(['src/**/*.ts'])
-    .pipe(ts(tsConfig))
-    .pipe(gulp.dest("release"));
+  gulp.src('src/**/*.ts')
+    .pipe(typescript({
+      target: 'ES5',
+      out: 'jquery-resource.js'
+    }))
+    .pipe(gulp.dest('release'))
+    .pipe(uglify({
+      preserveComments: 'some'
+    }))
+    .pipe(rename('jquery-resource.min.js'))
+    .pipe(gulp.dest('release'));
 });
 
 gulp.task('test', function() {

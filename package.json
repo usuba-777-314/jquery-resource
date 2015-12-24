@@ -14,7 +14,9 @@
     "cors": "^2.7.1",
     "express": "^4.13.3",
     "gulp": "^3.9.0",
+    "gulp-rename": "^1.2.2",
     "gulp-typescript": "^2.10.0",
+    "gulp-uglify": "^1.5.1",
     "gulp-webserver": "^0.9.1",
     "tsd": "^0.6.5"
   }
