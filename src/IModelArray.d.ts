@@ -1,7 +1,7 @@
 declare module resource {
 
   /**
-   * @interafce IModelArray モデル配列
+   * @interface IModelArray モデル配列
    */
   export interface IModelArray<T extends IModel> extends Array<T> {
 

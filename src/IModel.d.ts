@@ -1,7 +1,7 @@
 declare module resource {
 
   /**
-   * @interafce IModel モデル
+   * @interface IModel モデル
    */
   export interface IModel {
 

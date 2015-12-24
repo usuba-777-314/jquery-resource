@@ -6,23 +6,7 @@ module resource {
    */
   export class Resource<T extends IModel> {
 
-    static defaultActions: IActions = {
-      "get": {method: "GET"},
-      "query": {method: "GET", arrayFlg: true},
-      "create": {method: "POST"},
-      "update": {method: "PUT"},
-      "destroy": {method: "DELETE"},
-    };
-
-    static railsActions: IActions = {
-      "get": {method: "GET"},
-      "query": {method: "GET", arrayFlg: true},
-      "create": {method: "POST"},
-      "update": {method: "POST", params: {_method: "PUT"}},
-      "destroy": {method: "POST", params: {_method: "DELETE"}},
-    };
-
-    static default: IActions = Resource.defaultActions;
+    static defaultActions: IActions;
 
     modelClass: IModelClass<T>;
 
@@ -49,7 +33,7 @@ module resource {
 
       this.modelClass.prototype = Object.create(modelClass.prototype);
 
-      this.actions = $.extend({}, Resource.default, actions);
+      this.actions = $.extend({}, Resource.defaultActions, actions);
     }
 
     /**
@@ -57,7 +41,13 @@ module resource {
      */
     static defaultMode() {
 
-      Resource.default = Resource.railsActions;
+      Resource.defaultActions = {
+        "get": {method: "GET"},
+        "query": {method: "GET", arrayFlg: true},
+        "create": {method: "POST"},
+        "update": {method: "PUT"},
+        "destroy": {method: "DELETE"},
+      };
     }
 
     /**
@@ -65,7 +55,13 @@ module resource {
      */
     static railsMode() {
 
-      Resource.default = Resource.railsActions;
+      Resource.defaultActions = {
+        "get": {method: "GET"},
+        "query": {method: "GET", arrayFlg: true},
+        "create": {method: "POST"},
+        "update": {method: "POST", params: {_method: "PUT"}},
+        "destroy": {method: "POST", params: {_method: "DELETE"}},
+      };
     }
 
     /**
@@ -138,11 +134,11 @@ module resource {
     /**
      * @method static copy オブジェクトの値をモデルにコピーする。
      *    モデルが指定されていない場合、新しくモデルを生成して返却する。
-     * @param {any} src
+     * @param {{}} src
      * @param {T} dest
      * @returns {T}
      */
-    private copy(src: any, dest?: T): T {
+    private copy(src: {}, dest?: T): T {
 
       if (dest) {
         $.each(dest, (key: string) => {
@@ -198,10 +194,10 @@ module resource {
      * @method generateHttpConfig HTTP設定を生成して返却する。
      * @param {IAction} action
      * @param {T} model
-     * @param {any} params
+     * @param {{}} params
      * @returns {Object}
      */
-    private generateHttpConfig(action: IAction, model?: T, params?: any): Object {
+    private generateHttpConfig(action: IAction, model?: T, params?: {}): Object {
 
       var httpConfig = <any>{};
       $.each(action, (key: string, value: any) => {
@@ -211,10 +207,10 @@ module resource {
       });
 
       var templateURL = action.url || this.url;
-      var params = $.extend({}, action.params, model && model.toJSON(), params);
+      var data = $.extend({}, action.params, model && model.toJSON(), params);
       var paramKeys = Router.getURLParamKeys(templateURL);
-      httpConfig.url = Router.generateURL(templateURL, paramKeys, params);
-      httpConfig.data = this.excludeParams(params, paramKeys);
+      httpConfig.url = Router.generateURL(templateURL, paramKeys, data);
+      httpConfig.data = this.excludeParams(data, paramKeys);
 
       return httpConfig;
     }
@@ -235,12 +231,14 @@ module resource {
 
     /**
      * @method generateModel モデルを生成して返却する。
-     * @param {any} params
+     * @param {{}} params
      * @returns {T}
      */
-    private generateModel(params?: any): T {
+    private generateModel(params?: {}): T {
 
       return new this.modelClass(params);
     }
   }
+
+  Resource.defaultMode();
 }

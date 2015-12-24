@@ -43,19 +43,31 @@ var resource;
                 }
             };
             this.modelClass.prototype = Object.create(modelClass.prototype);
-            this.actions = $.extend({}, Resource.default, actions);
+            this.actions = $.extend({}, Resource.defaultActions, actions);
         }
         /**
          * @method static defaultMode デフォルトモードに切り替える。
          */
         Resource.defaultMode = function () {
-            Resource.default = Resource.railsActions;
+            Resource.defaultActions = {
+                "get": { method: "GET" },
+                "query": { method: "GET", arrayFlg: true },
+                "create": { method: "POST" },
+                "update": { method: "PUT" },
+                "destroy": { method: "DELETE" },
+            };
         };
         /**
          * @method static railsMode Railsモードに切り替える。
          */
         Resource.railsMode = function () {
-            Resource.default = Resource.railsActions;
+            Resource.defaultActions = {
+                "get": { method: "GET" },
+                "query": { method: "GET", arrayFlg: true },
+                "create": { method: "POST" },
+                "update": { method: "POST", params: { _method: "PUT" } },
+                "destroy": { method: "POST", params: { _method: "DELETE" } },
+            };
         };
         /**
          * @method static init リソースの初期化を行う。
@@ -115,7 +127,7 @@ var resource;
         /**
          * @method static copy オブジェクトの値をモデルにコピーする。
          *    モデルが指定されていない場合、新しくモデルを生成して返却する。
-         * @param {any} src
+         * @param {{}} src
          * @param {T} dest
          * @returns {T}
          */
@@ -167,7 +179,7 @@ var resource;
          * @method generateHttpConfig HTTP設定を生成して返却する。
          * @param {IAction} action
          * @param {T} model
-         * @param {any} params
+         * @param {{}} params
          * @returns {Object}
          */
         Resource.prototype.generateHttpConfig = function (action, model, params) {
@@ -178,10 +190,10 @@ var resource;
                 httpConfig[key] = value;
             });
             var templateURL = action.url || this.url;
-            var params = $.extend({}, action.params, model && model.toJSON(), params);
+            var data = $.extend({}, action.params, model && model.toJSON(), params);
             var paramKeys = resource_1.Router.getURLParamKeys(templateURL);
-            httpConfig.url = resource_1.Router.generateURL(templateURL, paramKeys, params);
-            httpConfig.data = this.excludeParams(params, paramKeys);
+            httpConfig.url = resource_1.Router.generateURL(templateURL, paramKeys, data);
+            httpConfig.data = this.excludeParams(data, paramKeys);
             return httpConfig;
         };
         /**
@@ -197,30 +209,16 @@ var resource;
         };
         /**
          * @method generateModel モデルを生成して返却する。
-         * @param {any} params
+         * @param {{}} params
          * @returns {T}
          */
         Resource.prototype.generateModel = function (params) {
             return new this.modelClass(params);
         };
-        Resource.defaultActions = {
-            "get": { method: "GET" },
-            "query": { method: "GET", arrayFlg: true },
-            "create": { method: "POST" },
-            "update": { method: "PUT" },
-            "destroy": { method: "DELETE" },
-        };
-        Resource.railsActions = {
-            "get": { method: "GET" },
-            "query": { method: "GET", arrayFlg: true },
-            "create": { method: "POST" },
-            "update": { method: "POST", params: { _method: "PUT" } },
-            "destroy": { method: "POST", params: { _method: "DELETE" } },
-        };
-        Resource.default = Resource.defaultActions;
         return Resource;
     })();
     resource_1.Resource = Resource;
+    Resource.defaultMode();
 })(resource || (resource = {}));
 /// <reference path="Resource.ts" />
 var resource;
