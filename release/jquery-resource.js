@@ -132,7 +132,6 @@ var resource;
             var _this = this;
             var action = this.actions[actionName];
             return function (model, params) {
-                console.log([actionName, action]);
                 var instanceCallFlg = !!model;
                 var val = instanceCallFlg ? model : (action.arrayFlg ? [] : _this.generateModel());
                 var promise = resource_1.http(_this.generateHttpConfig(action, model, params))

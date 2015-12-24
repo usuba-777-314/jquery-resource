@@ -111,9 +111,9 @@ $(function() {
       scope.user.name = scope.$nameInput.val();
       scope.user.age = Number(scope.$ageInput.val());
 
-      scope.user.create().then(function() {
+      scope.user.create().then(function(user) {
 
-        showController(scope.user.userId);
+        showController(user.userId);
       });
     };
 
@@ -140,9 +140,7 @@ $(function() {
     scope.$ageInput = $('<input type="number">').val(scope.user.age);
     $('<dd>').append(scope.$ageInput).appendTo($form);
 
-    $('<button type="button">Create</button>')
-      .on('click', scope.create)
-      .appendTo($canvas);
+    $('<button type="button">Create</button>').appendTo($form);
   };
 
   var editController = function(id) {
@@ -160,7 +158,7 @@ $(function() {
       scope.user.name = scope.$nameInput.val();
       scope.user.age = Number(scope.$ageInput.val());
 
-      scope.user.update().then(function() {
+      scope.user.update().then(function(user) {
 
         showController(user.userId);
       });
@@ -189,9 +187,7 @@ $(function() {
     scope.$ageInput = $('<input type="number">').val(scope.user.age);
     $('<dd>').append(scope.$ageInput).appendTo($form);
 
-    $('<button type="button">Update</button>')
-      .on('click', scope.update)
-      .appendTo($canvas);
+    $('<button>Update</button>').appendTo($form);
   };
 
   indexController();

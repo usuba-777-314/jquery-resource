@@ -144,8 +144,6 @@ module resource {
 
       return (model?: T, params?: any) => {
 
-        console.log([actionName, action]);
-
         var instanceCallFlg = !!model;
         var val = instanceCallFlg ? model : (action.arrayFlg ? <IModelArray<T>>[] : this.generateModel());
         var promise = http(this.generateHttpConfig(action, model, params))
