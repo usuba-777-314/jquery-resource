@@ -140,7 +140,7 @@ $(function() {
     scope.$ageInput = $('<input type="number">').val(scope.user.age);
     $('<dd>').append(scope.$ageInput).appendTo($form);
 
-    $('<button type="button">Create</button>').appendTo($form);
+    $('<button>Create</button>').appendTo($form);
   };
 
   var editController = function(id) {
