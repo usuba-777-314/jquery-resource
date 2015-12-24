@@ -14,6 +14,16 @@ module resource {
       "destroy": {method: "DELETE"},
     };
 
+    static railsActions: IActions = {
+      "get": {method: "GET"},
+      "query": {method: "GET", arrayFlg: true},
+      "create": {method: "POST"},
+      "update": {method: "POST", params: {_method: "PUT"}},
+      "destroy": {method: "POST", params: {_method: "DELETE"}},
+    };
+
+    static default: IActions = Resource.defaultActions;
+
     modelClass: IModelClass<T>;
 
     private actions: IActions;
@@ -39,7 +49,23 @@ module resource {
 
       this.modelClass.prototype = Object.create(modelClass.prototype);
 
-      this.actions = $.extend({}, Resource.defaultActions, actions);
+      this.actions = $.extend({}, Resource.default, actions);
+    }
+
+    /**
+     * @method static defaultMode デフォルトモードに切り替える。
+     */
+    static defaultMode() {
+
+      Resource.default = Resource.railsActions;
+    }
+
+    /**
+     * @method static railsMode Railsモードに切り替える。
+     */
+    static railsMode() {
+
+      Resource.default = Resource.railsActions;
     }
 
     /**

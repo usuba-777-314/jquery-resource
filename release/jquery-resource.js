@@ -38,8 +38,20 @@ var resource;
                 }
             };
             this.modelClass.prototype = Object.create(modelClass.prototype);
-            this.actions = $.extend({}, Resource.defaultActions, actions);
+            this.actions = $.extend({}, Resource.default, actions);
         }
+        /**
+         * @method static defaultMode デフォルトモードに切り替える。
+         */
+        Resource.defaultMode = function () {
+            Resource.default = Resource.railsActions;
+        };
+        /**
+         * @method static railsMode Railsモードに切り替える。
+         */
+        Resource.railsMode = function () {
+            Resource.default = Resource.railsActions;
+        };
         /**
          * @method static init リソースの初期化を行う。
          * @param {IModelClass<IModel>} modelClass
@@ -193,6 +205,14 @@ var resource;
             "update": { method: "PUT" },
             "destroy": { method: "DELETE" },
         };
+        Resource.railsActions = {
+            "get": { method: "GET" },
+            "query": { method: "GET", arrayFlg: true },
+            "create": { method: "POST" },
+            "update": { method: "POST", params: { _method: "PUT" } },
+            "destroy": { method: "POST", params: { _method: "DELETE" } },
+        };
+        Resource.default = Resource.defaultActions;
         return Resource;
     })();
     resource_1.Resource = Resource;
