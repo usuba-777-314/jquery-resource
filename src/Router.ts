@@ -6,30 +6,40 @@ module resource {
   export class Router {
 
     /**
-     * @method generateURL URLを生成して返却する。
-     *    (例1)
-     *    template = "/users/:userId", params = {userId: "1"}の場合、
-     *    "/users/1"を返却する。
-     *    (例2)
-     *    template = "/users/:userId", params = {}の場合、
-     *    "/users"を返却する。
+     * @method getUrlParams URLパラメータキーを返却する。
      * @param {string} template
-     * @param {any} params
-     * @returns {string}
+     * @returns {string[]}
      */
-    static generateURL(template: string, params: any): string {
+    static getURLParamKeys(template: string): string[] {
 
-      var url = template;
-
-      var urlParams = url.split(/\W/)
+      return template.split(/\W/)
         .filter((p: string) => !new RegExp("^\\d+$").test(p))
         .filter((p: string) => !!p)
-        .filter((p: string) => new RegExp("(^|[^\\\\]):" + p + "(\\W|$)").test(url));
+        .filter((p: string) => new RegExp("(^|[^\\\\]):" + p + "(\\W|$)").test(template));
+    }
 
-      urlParams.forEach(
-        (k: string) => url = params[k] ? Router.replace(url, k, params[k]) : Router.exclude(url, k));
+    /**
+     * @method generateURL URLを生成して返却する。
+     *    (例1)
+     *    template = "/users/:userId", paramKeys = ['userId'], params = {userId: "1"}の場合、
+     *    "/users/1"を返却する。
+     *    (例2)
+     *    template = "/users/:userId", paramKeys = ['userId'], params = {}の場合、
+     *    "/users"を返却する。
+     * @param {string} template
+     * @param {string[]} paramKeys
+     * @param {{}} params
+     * @returns {string}
+     */
+    static generateURL(template: string, paramKeys: string[], params: {}): string {
 
-      return url;
+      if (!paramKeys.length) {
+        return template;
+      }
+
+      return paramKeys.reduce(
+        (u: string, k: string) => params[k] ? Router.replace(u, k, params[k]) : Router.exclude(u, k),
+        template);
     }
 
     /**

@@ -180,16 +180,15 @@ module resource {
       var httpConfig = <any>{};
       $.each(action, (key: string, value: any) => {
 
-        if (key === 'url' || key === 'arrayFlg') {
-          return;
-        }
-
+        if (key === 'url' || key === 'arrayFlg') return;
         httpConfig[key] = value;
       });
 
-      var data = $.extend({}, action.params, model && model.toJSON(), params);
-      httpConfig.url = Router.generateURL(action.url || this.url, data);
-      httpConfig.data = data;
+      var templateURL = action.url || this.url;
+      var params = $.extend({}, action.params, model && model.toJSON(), params);
+      var paramKeys = Router.getURLParamKeys(templateURL);
+      httpConfig.url = Router.generateURL(templateURL, paramKeys, params);
+      httpConfig.data = this.excludeParams(params, paramKeys);
 
       return httpConfig;
     }
@@ -202,6 +201,20 @@ module resource {
     private generateModel(params?: any): T {
 
       return new this.modelClass(params);
+    }
+
+    /**
+     * @method excludeParams パラメータから指定のキーを除外して返却する。
+     * @param {{}} params
+     * @param {string[]} paramKeys
+     * @returns {{}} result
+     */
+    private excludeParams(params: {}, paramKeys: string[]): {} {
+
+      var result = $.extend({}, params);
+      paramKeys.forEach((k: string) => delete result[k]);
+
+      return result;
     }
   }
 }
