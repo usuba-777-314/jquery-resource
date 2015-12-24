@@ -14,7 +14,7 @@ module resource {
       "destroy": {method: "DELETE"},
     };
 
-    private modelClass: IModelClass<T>;
+    modelClass: IModelClass<T>;
 
     private actions: IActions;
 
@@ -64,7 +64,7 @@ module resource {
     /**
      * @method initConstructor コンストラクタを初期化する。
      */
-    private initConstructor() {
+    initConstructor() {
 
       Object.defineProperty(this.modelClass, 'constructor', {
         value: (params?: any) => this.generateModel(params),
@@ -77,7 +77,7 @@ module resource {
     /**
      * @method setActions アクションを初期化する。
      */
-    private initActions() {
+    initActions() {
 
       var prototype = this.modelClass.prototype;
       $.each(this.actions, (actionName: string) => {
@@ -91,7 +91,7 @@ module resource {
     /**
      * @method initToJSON JSON変換関数の初期化を行う。
      */
-    private initToJSON() {
+    initToJSON() {
 
       var prototype = this.modelClass.prototype;
       prototype.toJSON = function() {

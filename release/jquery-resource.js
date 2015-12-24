@@ -16,13 +16,6 @@ var resource;
     resource.http = http;
 })(resource || (resource = {}));
 var resource;
-(function (resource) {
-    'use strict';
-    $.resource = function (modelClass, url, actions) {
-        return resource.Resource.init(modelClass, url, actions);
-    };
-})(resource || (resource = {}));
-var resource;
 (function (resource_1) {
     'use strict';
     /**
@@ -163,15 +156,27 @@ var resource;
         Resource.prototype.generateHttpConfig = function (action, model, params) {
             var httpConfig = {};
             $.each(action, function (key, value) {
-                if (key === 'url' || key === 'arrayFlg') {
+                if (key === 'url' || key === 'arrayFlg')
                     return;
-                }
                 httpConfig[key] = value;
             });
-            var data = $.extend({}, action.params, model && model.toJSON(), params);
-            httpConfig.url = resource_1.Router.generateURL(action.url || this.url, data);
-            httpConfig.data = data;
+            var templateURL = action.url || this.url;
+            var params = $.extend({}, action.params, model && model.toJSON(), params);
+            var paramKeys = resource_1.Router.getURLParamKeys(templateURL);
+            httpConfig.url = resource_1.Router.generateURL(templateURL, paramKeys, params);
+            httpConfig.data = this.excludeParams(params, paramKeys);
             return httpConfig;
+        };
+        /**
+         * @method excludeParams パラメータから指定のキーを除外して返却する。
+         * @param {{}} params
+         * @param {string[]} paramKeys
+         * @returns {{}} result
+         */
+        Resource.prototype.excludeParams = function (params, paramKeys) {
+            var result = $.extend({}, params);
+            paramKeys.forEach(function (k) { return delete result[k]; });
+            return result;
         };
         /**
          * @method generateModel モデルを生成して返却する。
@@ -192,6 +197,12 @@ var resource;
     })();
     resource_1.Resource = Resource;
 })(resource || (resource = {}));
+/// <reference path="Resource.ts" />
+var resource;
+(function (resource) {
+    'use strict';
+    $.resource = resource.Resource;
+})(resource || (resource = {}));
 var resource;
 (function (resource) {
     /**
@@ -201,25 +212,34 @@ var resource;
         function Router() {
         }
         /**
-         * @method generateURL URLを生成して返却する。
-         *    (例1)
-         *    template = "/users/:userId", params = {userId: "1"}の場合、
-         *    "/users/1"を返却する。
-         *    (例2)
-         *    template = "/users/:userId", params = {}の場合、
-         *    "/users"を返却する。
+         * @method getUrlParams URLパラメータキーを返却する。
          * @param {string} template
-         * @param {any} params
-         * @returns {string}
+         * @returns {string[]}
          */
-        Router.generateURL = function (template, params) {
-            var url = template;
-            var urlParams = url.split(/\W/)
+        Router.getURLParamKeys = function (template) {
+            return template.split(/\W/)
                 .filter(function (p) { return !new RegExp("^\\d+$").test(p); })
                 .filter(function (p) { return !!p; })
-                .filter(function (p) { return new RegExp("(^|[^\\\\]):" + p + "(\\W|$)").test(url); });
-            urlParams.forEach(function (k) { return url = params[k] ? Router.replace(url, k, params[k]) : Router.exclude(url, k); });
-            return url;
+                .filter(function (p) { return new RegExp("(^|[^\\\\]):" + p + "(\\W|$)").test(template); });
+        };
+        /**
+         * @method generateURL URLを生成して返却する。
+         *    (例1)
+         *    template = "/users/:userId", paramKeys = ['userId'], params = {userId: "1"}の場合、
+         *    "/users/1"を返却する。
+         *    (例2)
+         *    template = "/users/:userId", paramKeys = ['userId'], params = {}の場合、
+         *    "/users"を返却する。
+         * @param {string} template
+         * @param {string[]} paramKeys
+         * @param {{}} params
+         * @returns {string}
+         */
+        Router.generateURL = function (template, paramKeys, params) {
+            if (!paramKeys.length) {
+                return template;
+            }
+            return paramKeys.reduce(function (u, k) { return params[k] ? Router.replace(u, k, params[k]) : Router.exclude(u, k); }, template);
         };
         /**
          * @method replace 対象キーを置換して返却する。

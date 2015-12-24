@@ -1,7 +1,7 @@
 $(function() {
 
   var User = function User() {};
-  var userResource = $.resource(User, 'http://localhost:3001/users/:userId');
+  var userResource = $.resource.init(User, 'http://localhost:3001/users/:userId');
 
   var $canvas = $('#canvas');
 
