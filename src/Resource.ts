@@ -194,16 +194,6 @@ module resource {
     }
 
     /**
-     * @method generateModel モデルを生成して返却する。
-     * @param {any} params
-     * @returns {T}
-     */
-    private generateModel(params?: any): T {
-
-      return new this.modelClass(params);
-    }
-
-    /**
      * @method excludeParams パラメータから指定のキーを除外して返却する。
      * @param {{}} params
      * @param {string[]} paramKeys
@@ -215,6 +205,16 @@ module resource {
       paramKeys.forEach((k: string) => delete result[k]);
 
       return result;
+    }
+
+    /**
+     * @method generateModel モデルを生成して返却する。
+     * @param {any} params
+     * @returns {T}
+     */
+    private generateModel(params?: any): T {
+
+      return new this.modelClass(params);
     }
   }
 }
