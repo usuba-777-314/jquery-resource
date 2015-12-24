@@ -3,7 +3,7 @@ var ts = require('gulp-typescript');
 var webserver = require('gulp-webserver');
 var testApi = require('./test/api/api');
 
-gulp.task('default', ['watch']);
+gulp.task('default', ['watch', 'test']);
 
 gulp.task('watch', ['scripts'], function() {
 
