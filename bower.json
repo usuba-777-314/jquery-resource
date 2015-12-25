@@ -1,6 +1,6 @@
 {
   "name": "jquery-resource",
-  "version": "0.0.1",
+  "version": "0.0.0",
   "description": "Support for RESTful.",
   "main": "release/jquery-resource.min.js",
   "license": "MIT",

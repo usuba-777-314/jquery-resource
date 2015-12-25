@@ -1,5 +1,5 @@
 /*!
- * jquery-resource v0.0.1 - Support for RESTful.
+ * jquery-resource v0.0.0 - Support for RESTful.
  * Copyright 2015 Hironobu Igawa
  * license MIT
  */
