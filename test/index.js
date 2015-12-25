@@ -128,17 +128,20 @@ $(function() {
       .on('click', scope.showIndex)
       .appendTo($canvas);
 
-    var $form = $('<form><dl></dl></form>')
+    var $form = $('<form>')
       .on('submit', function(e) { e.preventDefault(); })
       .on('submit', scope.create)
       .appendTo($canvas);
 
-    $('<dt>Name</dt>').appendTo($form);
     scope.$nameInput = $('<input type="text">').val(scope.user.name);
-    $('<dd>').append(scope.$nameInput).appendTo($form);
-    $('<dt>Age</dt>').appendTo($form);
     scope.$ageInput = $('<input type="number">').val(scope.user.age);
-    $('<dd>').append(scope.$ageInput).appendTo($form);
+
+    $('<dl>')
+      .append('<dt>Name</dt>')
+      .append($('<dd></dd>').append(scope.$nameInput))
+      .append('<dt>Age</dt>')
+      .append($('<dd></dd>').append(scope.$ageInput))
+      .appendTo($form);
 
     $('<button>Create</button>').appendTo($form);
   };
@@ -175,17 +178,20 @@ $(function() {
       .on('click', scope.showIndex)
       .appendTo($canvas);
 
-    var $form = $('<form><dl></dl></form>')
+    var $form = $('<form>')
       .on('submit', function(e) { e.preventDefault(); })
       .on('submit', scope.update)
       .appendTo($canvas);
 
-    $('<dt>Name</dt>').appendTo($form);
     scope.$nameInput = $('<input type="text">').val(scope.user.name);
-    $('<dd>').append(scope.$nameInput).appendTo($form);
-    $('<dt>Age</dt>').appendTo($form);
     scope.$ageInput = $('<input type="number">').val(scope.user.age);
-    $('<dd>').append(scope.$ageInput).appendTo($form);
+
+    $('<dl>')
+      .append('<dt>Name</dt>')
+      .append($('<dd></dd>').append(scope.$nameInput))
+      .append('<dt>Age</dt>')
+      .append($('<dd></dd>').append(scope.$ageInput))
+      .appendTo($form);
 
     $('<button>Update</button>').appendTo($form);
   };
