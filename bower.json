@@ -8,11 +8,11 @@
     "test",
     ".gitignore",
     "README.md",
-    "gulpfile.json",
+    "gulpfile.js",
     "package.json",
     "tsd.json"
   ],
   "dependencies": {
-    "jquery": "^2.1.4"
+    "jquery": "2.1.4"
   }
 }
