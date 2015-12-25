@@ -1,8 +1,8 @@
 {
   "name": "jquery-resource",
   "version": "0.0.1",
-  "description": "support for RESTful.",
-  "main": "index.js",
+  "description": "Support for RESTful.",
+  "main": "release/jquery-resource.min.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
