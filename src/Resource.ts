@@ -27,7 +27,11 @@ module resource {
         modelClass.call(this, params);
 
         if (params) {
-          $.each(params, (k: string, v: any) => this[k] = v);
+          $.each(params, (k: string, v: any) => {
+
+            if (!params.hasOwnProperty(k)) return;
+            this[k] = v
+          });
         }
       };
 

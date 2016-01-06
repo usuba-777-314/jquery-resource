@@ -54,7 +54,11 @@ var resource;
                 var _this = this;
                 modelClass.call(this, params);
                 if (params) {
-                    $.each(params, function (k, v) { return _this[k] = v; });
+                    $.each(params, function (k, v) {
+                        if (!params.hasOwnProperty(k))
+                            return;
+                        _this[k] = v;
+                    });
                 }
             };
             this.modelClass.prototype = Object.create(modelClass.prototype);
