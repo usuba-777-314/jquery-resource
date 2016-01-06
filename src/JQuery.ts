@@ -2,11 +2,23 @@
 
 interface JQueryStatic {
 
-  resource: typeof resource.Resource;
+  resource: IResource;
+}
+
+interface IResource {
+
+  init(modelClass: resource.IModelClass<resource.IModel>,
+       url: string,
+       actions?: resource.IActions): resource.IModelClass<resource.IModel>
+
+  http: resource.Http;
 }
 
 module resource {
   'use strict';
 
-  $.resource = Resource;
+  $.resource = {
+    init: Resource.init,
+    http: resource.Http
+  };
 }

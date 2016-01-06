@@ -7,18 +7,33 @@ var resource;
 (function (resource) {
     'use strict';
     /**
-     * @function http 通信処理を行う。
-     * @param {any} params
-     * @returns {JQueryPromise}
+     * @class Http HTTP通信
      */
-    function http(params) {
-        var options = $.extend({}, params);
-        options.dataType = 'json';
-        options.type = options.method;
-        delete options.method;
-        return $.ajax(options);
-    }
-    resource.http = http;
+    var Http = (function () {
+        function Http() {
+        }
+        /**
+         * @function execute 通信処理を行う。
+         * @param {{}} params
+         * @returns {JQueryPromise}
+         */
+        Http.execute = function (params) {
+            var options = $.extend({}, params);
+            options.dataType = 'json';
+            options.type = options.method;
+            delete options.method;
+            var promise = $.Deferred().resolve(options).promise();
+            for (var i = 0; i < Http.interceptors.length; i++)
+                promise = promise.then(Http.interceptors[i].request, Http.interceptors[i].requestError);
+            promise = promise.then(function (o) { return $.ajax(o); });
+            for (var j = Http.interceptors.length - 1; j >= 0; j++)
+                promise = promise.then(Http.interceptors[i].response, Http.interceptors[i].responseError);
+            return promise;
+        };
+        Http.interceptors = [];
+        return Http;
+    })();
+    resource.Http = Http;
 })(resource || (resource = {}));
 var resource;
 (function (resource_1) {
@@ -156,7 +171,7 @@ var resource;
             return function (model, params) {
                 var instanceCallFlg = !!model;
                 var val = instanceCallFlg ? model : (action.arrayFlg ? [] : _this.generateModel());
-                var promise = resource_1.http(_this.generateHttpConfig(action, model, params))
+                var promise = resource_1.Http.execute(_this.generateHttpConfig(action, model, params))
                     .done(function (data) {
                     if (action.arrayFlg) {
                         data.forEach(function (v) { return val.push(_this.generateModel(v)); });
@@ -166,7 +181,7 @@ var resource;
                     }
                 })
                     .always(function () { return val.resolved = true; })
-                    .done(function () { return val; });
+                    .done(function () { return $.Deferred().resolve(val).promise(); });
                 if (!instanceCallFlg) {
                     val.promise = promise;
                     val.resolved = false;
@@ -224,7 +239,10 @@ var resource;
 var resource;
 (function (resource) {
     'use strict';
-    $.resource = resource.Resource;
+    $.resource = {
+        init: resource.Resource.init,
+        http: resource.Http
+    };
 })(resource || (resource = {}));
 var resource;
 (function (resource) {

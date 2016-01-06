@@ -168,7 +168,7 @@ module resource {
 
         var instanceCallFlg = !!model;
         var val = instanceCallFlg ? model : (action.arrayFlg ? <IModelArray<T>>[] : this.generateModel());
-        var promise = http(this.generateHttpConfig(action, model, params))
+        var promise = Http.execute(this.generateHttpConfig(action, model, params))
           .done((data: any) => {
 
             if (action.arrayFlg) {
@@ -178,7 +178,7 @@ module resource {
             }
           })
           .always(() => (<T>val).resolved = true)
-          .done(() => val);
+          .done(() => $.Deferred().resolve(val).promise());
 
         if (!instanceCallFlg) {
           (<T>val).promise = promise;
