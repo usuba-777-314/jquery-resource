@@ -253,6 +253,9 @@ var resource;
          *    (例2)
          *    template = "/users/:userId", paramKeys = ['userId'], params = {}の場合、
          *    "/users"を返却する。
+         *    (例3)
+         *    template = "/users/:userId.json", paramKeys = ['userId'], params = {}の場合、
+         *    "/users.json"を返却する。
          * @param {string} template
          * @param {string[]} paramKeys
          * @param {{}} params
@@ -262,7 +265,8 @@ var resource;
             if (!paramKeys.length) {
                 return template;
             }
-            return paramKeys.reduce(function (u, k) { return params[k] ? Router.replace(u, k, params[k]) : Router.exclude(u, k); }, template);
+            var url = paramKeys.reduce(function (u, k) { return params[k] ? Router.replace(u, k, params[k]) : Router.exclude(u, k); }, template);
+            return url.replace(/\/\.json$/, '.json');
         };
         /**
          * @method replace 対象キーを置換して返却する。

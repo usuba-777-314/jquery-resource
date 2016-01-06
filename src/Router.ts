@@ -26,6 +26,9 @@ module resource {
      *    (例2)
      *    template = "/users/:userId", paramKeys = ['userId'], params = {}の場合、
      *    "/users"を返却する。
+     *    (例3)
+     *    template = "/users/:userId.json", paramKeys = ['userId'], params = {}の場合、
+     *    "/users.json"を返却する。
      * @param {string} template
      * @param {string[]} paramKeys
      * @param {{}} params
@@ -37,9 +40,11 @@ module resource {
         return template;
       }
 
-      return paramKeys.reduce(
+      var url = paramKeys.reduce(
         (u: string, k: string) => params[k] ? Router.replace(u, k, params[k]) : Router.exclude(u, k),
         template);
+
+      return url.replace(/\/\.json$/, '.json');
     }
 
     /**
