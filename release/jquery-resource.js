@@ -241,8 +241,16 @@ var resource;
     'use strict';
     $.resource = {
         init: resource.Resource.init,
+        defaultMode: resource.Resource.defaultMode,
+        railsMode: resource.Resource.railsMode,
         http: resource.Http
     };
+    Object.defineProperty($.resource, 'defaultActions', {
+        get: function () { return resource.Resource.defaultActions; },
+        set: function (actions) { return resource.Resource.defaultActions = actions; },
+        enumerable: true,
+        configurable: true
+    });
 })(resource || (resource = {}));
 var resource;
 (function (resource) {
