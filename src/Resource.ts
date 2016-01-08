@@ -25,14 +25,13 @@ module resource {
       this.modelClass = <any>function Model (params?: any) {
 
         modelClass.call(this, params);
+        if (!params) return;
 
-        if (params) {
-          $.each(params, (k: string, v: any) => {
+        Object.keys(params).forEach((key: string) => {
 
-            if (!params.hasOwnProperty(k)) return;
-            this[k] = v
-          });
-        }
+          if (!params.hasOwnProperty(key)) return;
+          this[key] = params[key];
+        });
       };
 
       this.modelClass.prototype = Object.create(modelClass.prototype);
@@ -124,11 +123,11 @@ module resource {
 
         var json = {};
 
-        $.each(this, (key: string, value: string) => {
+        Object.keys(this).forEach((key: string) => {
 
           if (!this.hasOwnProperty(key)) return;
           if (key === 'promise' || key === 'resolved') return;
-          json[key] = value;
+          json[key] = this[key];
         });
 
         return json;

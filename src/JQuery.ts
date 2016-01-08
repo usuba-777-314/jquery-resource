@@ -1,4 +1,5 @@
 /// <reference path="Resource.ts" />
+/// <reference path="Http.ts" />
 
 interface JQueryStatic {
 
@@ -20,20 +21,19 @@ interface IResource {
   http: resource.Http;
 }
 
-module resource {
-  'use strict';
+(($: JQueryStatic) => {
 
   $.resource = {
-    init: Resource.init,
-    defaultMode: Resource.defaultMode,
-    railsMode: Resource.railsMode,
+    init: resource.Resource.init,
+    defaultMode: resource.Resource.defaultMode,
+    railsMode: resource.Resource.railsMode,
     http: resource.Http
   };
 
   Object.defineProperty($.resource, 'defaultActions', {
-    get: () => Resource.defaultActions,
-    set: (actions: IActions) => Resource.defaultActions = actions,
+    get: () => resource.Resource.defaultActions,
+    set: (actions: resource.IActions) => resource.Resource.defaultActions = actions,
     enumerable: true,
     configurable: true
   });
-}
+})(jQuery);

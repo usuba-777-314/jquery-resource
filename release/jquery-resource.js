@@ -19,15 +19,17 @@ var resource;
          */
         Http.execute = function (params) {
             var options = $.extend({}, params);
-            options.dataType = 'json';
-            options.type = options.method;
-            delete options.method;
             var promise = $.Deferred().resolve(options).promise();
             for (var i = 0; i < Http.interceptors.length; i++)
                 promise = promise.then(Http.interceptors[i].request, Http.interceptors[i].requestError);
-            promise = promise.then(function (o) { return $.ajax(o); });
-            for (var j = Http.interceptors.length - 1; j >= 0; j++)
-                promise = promise.then(Http.interceptors[i].response, Http.interceptors[i].responseError);
+            promise = promise.then(function (options) {
+                options.dataType = 'json';
+                options.type = options.method;
+                delete options.method;
+                return $.ajax(options);
+            });
+            for (var j = Http.interceptors.length - 1; j >= 0; j--)
+                promise = promise.then(Http.interceptors[j].response, Http.interceptors[j].responseError);
             return promise;
         };
         Http.interceptors = [];
@@ -53,13 +55,13 @@ var resource;
             this.modelClass = function Model(params) {
                 var _this = this;
                 modelClass.call(this, params);
-                if (params) {
-                    $.each(params, function (k, v) {
-                        if (!params.hasOwnProperty(k))
-                            return;
-                        _this[k] = v;
-                    });
-                }
+                if (!params)
+                    return;
+                Object.keys(params).forEach(function (key) {
+                    if (!params.hasOwnProperty(key))
+                        return;
+                    _this[key] = params[key];
+                });
             };
             this.modelClass.prototype = Object.create(modelClass.prototype);
             this.actions = $.extend({}, Resource.defaultActions, actions);
@@ -133,12 +135,12 @@ var resource;
             prototype.toJSON = function () {
                 var _this = this;
                 var json = {};
-                $.each(this, function (key, value) {
+                Object.keys(this).forEach(function (key) {
                     if (!_this.hasOwnProperty(key))
                         return;
                     if (key === 'promise' || key === 'resolved')
                         return;
-                    json[key] = value;
+                    json[key] = _this[key];
                 });
                 return json;
             };
@@ -240,9 +242,8 @@ var resource;
     Resource.defaultMode();
 })(resource || (resource = {}));
 /// <reference path="Resource.ts" />
-var resource;
-(function (resource) {
-    'use strict';
+/// <reference path="Http.ts" />
+(function ($) {
     $.resource = {
         init: resource.Resource.init,
         defaultMode: resource.Resource.defaultMode,
@@ -255,7 +256,7 @@ var resource;
         enumerable: true,
         configurable: true
     });
-})(resource || (resource = {}));
+})(jQuery);
 var resource;
 (function (resource) {
     /**

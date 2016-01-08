@@ -16,17 +16,22 @@ module resource {
     static execute(params: {}): JQueryPromise<any> {
 
       var options = $.extend({}, params);
-      options.dataType = 'json';
-
-      options.type = options.method;
-      delete options.method;
-
       var promise = $.Deferred().resolve(options).promise();
+
       for (var i = 0; i < Http.interceptors.length; i ++)
         promise = promise.then(Http.interceptors[i].request, Http.interceptors[i].requestError);
-      promise = promise.then((o: any) => $.ajax(o));
-      for (var j = Http.interceptors.length - 1; j >= 0; j ++)
-        promise = promise.then(Http.interceptors[i].response, Http.interceptors[i].responseError);
+
+      promise = promise.then((options: any) => {
+
+        options.dataType = 'json';
+        options.type = options.method;
+        delete options.method;
+
+        return $.ajax(options)
+      });
+
+      for (var j = Http.interceptors.length - 1; j >= 0; j --)
+        promise = promise.then(Http.interceptors[j].response, Http.interceptors[j].responseError);
 
       return promise;
     }
@@ -37,9 +42,9 @@ module resource {
    */
   interface IHTTPInterceptor {
 
-    request: (options: any) => JQueryPromise<any>|void;
-    requestError: (options: any) => JQueryPromise<any>|void;
-    response: (data: any, textStatus: string, jqXHR: JQueryXHR) => JQueryPromise<any>|void;
-    responseError: (jqXHR: JQueryXHR, textStatus: string, errorThrown: any) => JQueryPromise<any>|void;
+    request: (options: any) => JQueryPromise<any>;
+    requestError: (options: any) => JQueryPromise<any>;
+    response: (data: any, textStatus: string, jqXHR: JQueryXHR) => JQueryPromise<any>;
+    responseError: (jqXHR: JQueryXHR, textStatus: string, errorThrown: any) => JQueryPromise<any>;
   }
 }
