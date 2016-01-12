@@ -6,7 +6,13 @@ module resource {
    */
   export class Resource<T extends IModel> {
 
-    static defaultActions: IActions;
+    static defaultActions: IActions = {
+      "get": {method: "GET"},
+      "query": {method: "GET", arrayFlg: true},
+      "create": {method: "POST"},
+      "update": {method: "PUT"},
+      "destroy": {method: "DELETE"}
+    };
 
     modelClass: IModelClass<T>;
 
@@ -37,34 +43,6 @@ module resource {
       this.modelClass.prototype = Object.create(modelClass.prototype);
 
       this.actions = $.extend({}, Resource.defaultActions, actions);
-    }
-
-    /**
-     * @method static defaultMode デフォルトモードに切り替える。
-     */
-    static defaultMode() {
-
-      Resource.defaultActions = {
-        "get": {method: "GET"},
-        "query": {method: "GET", arrayFlg: true},
-        "create": {method: "POST"},
-        "update": {method: "PUT"},
-        "destroy": {method: "DELETE"},
-      };
-    }
-
-    /**
-     * @method static railsMode Railsモードに切り替える。
-     */
-    static railsMode() {
-
-      Resource.defaultActions = {
-        "get": {method: "GET"},
-        "query": {method: "GET", arrayFlg: true},
-        "create": {method: "POST"},
-        "update": {method: "POST", params: {_method: "PUT"}},
-        "destroy": {method: "POST", params: {_method: "DELETE"}},
-      };
     }
 
     /**
@@ -242,6 +220,4 @@ module resource {
       return new this.modelClass(params);
     }
   }
-
-  Resource.defaultMode();
 }

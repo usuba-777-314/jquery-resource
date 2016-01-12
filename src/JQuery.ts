@@ -14,10 +14,6 @@ interface IResource {
        url: string,
        actions?: resource.IActions): resource.IModelClass<resource.IModel>;
 
-  defaultMode(): void;
-
-  railsMode(): void;
-
   http: resource.Http;
 }
 
@@ -25,8 +21,6 @@ interface IResource {
 
   $.resource = {
     init: resource.Resource.init,
-    defaultMode: resource.Resource.defaultMode,
-    railsMode: resource.Resource.railsMode,
     http: resource.Http
   };
 
