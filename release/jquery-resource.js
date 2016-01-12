@@ -67,30 +67,6 @@ var resource;
             this.actions = $.extend({}, Resource.defaultActions, actions);
         }
         /**
-         * @method static defaultMode デフォルトモードに切り替える。
-         */
-        Resource.defaultMode = function () {
-            Resource.defaultActions = {
-                "get": { method: "GET" },
-                "query": { method: "GET", arrayFlg: true },
-                "create": { method: "POST" },
-                "update": { method: "PUT" },
-                "destroy": { method: "DELETE" },
-            };
-        };
-        /**
-         * @method static railsMode Railsモードに切り替える。
-         */
-        Resource.railsMode = function () {
-            Resource.defaultActions = {
-                "get": { method: "GET" },
-                "query": { method: "GET", arrayFlg: true },
-                "create": { method: "POST" },
-                "update": { method: "POST", params: { _method: "PUT" } },
-                "destroy": { method: "POST", params: { _method: "DELETE" } },
-            };
-        };
-        /**
          * @method static init リソースの初期化を行う。
          * @param {IModelClass<IModel>} modelClass
          * @param {string} url
@@ -186,8 +162,11 @@ var resource;
                         _this.copy(data, val);
                     }
                 })
-                    .always(function () { return val.resolved = true; })
-                    .done(function () { return $.Deferred().resolve(val).promise(); });
+                    .always(function () {
+                    if (!instanceCallFlg)
+                        val.resolved = true;
+                })
+                    .then(function () { return val; });
                 if (!instanceCallFlg) {
                     val.promise = promise;
                     val.resolved = false;
@@ -236,18 +215,22 @@ var resource;
         Resource.prototype.generateModel = function (params) {
             return new this.modelClass(params);
         };
+        Resource.defaultActions = {
+            "get": { method: "GET" },
+            "query": { method: "GET", arrayFlg: true },
+            "create": { method: "POST" },
+            "update": { method: "PUT" },
+            "destroy": { method: "DELETE" }
+        };
         return Resource;
     })();
     resource_1.Resource = Resource;
-    Resource.defaultMode();
 })(resource || (resource = {}));
 /// <reference path="Resource.ts" />
 /// <reference path="Http.ts" />
 (function ($) {
     $.resource = {
         init: resource.Resource.init,
-        defaultMode: resource.Resource.defaultMode,
-        railsMode: resource.Resource.railsMode,
         http: resource.Http
     };
     Object.defineProperty($.resource, 'defaultActions', {

@@ -141,7 +141,7 @@ module resource {
      * @param {string} actionName
      * @returns {(data?: T, params?: any) => T|IModelArray<T>|JQueryPromise<T|IModelArray<T>>}
      */
-    private generateAction(actionName: string): (model?: T, params?: any) => T|IModelArray<T>|JQueryPromise<T|IModelArray<T>> {
+    private generateAction(actionName: string): (model?: T, params?: any) => T|IModelArray<T>|JQueryPromise<any> {
 
       var action = this.actions[actionName];
 
@@ -158,12 +158,15 @@ module resource {
               this.copy(data, <T>val);
             }
           })
-          .always(() => (<T>val).resolved = true)
-          .done(() => $.Deferred().resolve(val).promise());
+          .always(() => {
+
+            if (!instanceCallFlg) (<T>val).resolved = true;
+          })
+          .then(() => val);
 
         if (!instanceCallFlg) {
-          (<T>val).promise = promise;
-          (<T>val).resolved = false;
+          (<T|IModelArray<T>>val).promise = promise;
+          (<T|IModelArray<T>>val).resolved = false;
           return val;
         }
 
