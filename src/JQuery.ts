@@ -9,6 +9,7 @@ interface JQueryStatic {
 interface IResource {
 
   defaultActions?: resource.IActions;
+  defaultToJSON?: () => {};
 
   init(modelClass: resource.IModelClass<resource.IModel>,
        url: string,
@@ -27,6 +28,13 @@ interface IResource {
   Object.defineProperty($.resource, 'defaultActions', {
     get: () => resource.Resource.defaultActions,
     set: (actions: resource.IActions) => resource.Resource.defaultActions = actions,
+    enumerable: true,
+    configurable: true
+  });
+
+  Object.defineProperty($.resource, 'defaultToJSON', {
+    get: () => resource.Resource.defaultToJSON,
+    set: (defaultToJSON: () => {}) => resource.Resource.defaultToJSON = defaultToJSON,
     enumerable: true,
     configurable: true
   });

@@ -108,18 +108,7 @@ var resource;
          */
         Resource.prototype.initToJSON = function () {
             var prototype = this.modelClass.prototype;
-            prototype.toJSON = function () {
-                var _this = this;
-                var json = {};
-                Object.keys(this).forEach(function (key) {
-                    if (!_this.hasOwnProperty(key))
-                        return;
-                    if (key === 'promise' || key === 'resolved')
-                        return;
-                    json[key] = _this[key];
-                });
-                return json;
-            };
+            prototype.toJSON = prototype.defaultToJSON || Resource.defaultToJSON;
         };
         /**
          * @method static copy オブジェクトの値をモデルにコピーする。
@@ -222,6 +211,18 @@ var resource;
             "update": { method: "PUT" },
             "destroy": { method: "DELETE" }
         };
+        Resource.defaultToJSON = function () {
+            var _this = this;
+            var json = {};
+            Object.keys(this).forEach(function (key) {
+                if (!_this.hasOwnProperty(key))
+                    return;
+                if (key === 'promise' || key === 'resolved')
+                    return;
+                json[key] = _this[key];
+            });
+            return json;
+        };
         return Resource;
     })();
     resource_1.Resource = Resource;
@@ -236,6 +237,12 @@ var resource;
     Object.defineProperty($.resource, 'defaultActions', {
         get: function () { return resource.Resource.defaultActions; },
         set: function (actions) { return resource.Resource.defaultActions = actions; },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty($.resource, 'defaultToJSON', {
+        get: function () { return resource.Resource.defaultToJSON; },
+        set: function (defaultToJSON) { return resource.Resource.defaultToJSON = defaultToJSON; },
         enumerable: true,
         configurable: true
     });

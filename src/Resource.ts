@@ -14,6 +14,20 @@ module resource {
       "destroy": {method: "DELETE"}
     };
 
+    static defaultToJSON: () => {} = function() {
+
+      var json = {};
+
+      Object.keys(this).forEach((key: string) => {
+
+        if (!this.hasOwnProperty(key)) return;
+        if (key === 'promise' || key === 'resolved') return;
+        json[key] = this[key];
+      });
+
+      return json;
+    };
+
     modelClass: IModelClass<T>;
 
     private actions: IActions;
@@ -97,19 +111,7 @@ module resource {
     initToJSON() {
 
       var prototype = this.modelClass.prototype;
-      prototype.toJSON = function() {
-
-        var json = {};
-
-        Object.keys(this).forEach((key: string) => {
-
-          if (!this.hasOwnProperty(key)) return;
-          if (key === 'promise' || key === 'resolved') return;
-          json[key] = this[key];
-        });
-
-        return json;
-      };
+      prototype.toJSON = prototype.defaultToJSON || Resource.defaultToJSON;
     }
 
     /**
