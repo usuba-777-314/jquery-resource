@@ -34,7 +34,7 @@ var resource;
         };
         Http.interceptors = [];
         return Http;
-    })();
+    }());
     resource.Http = Http;
 })(resource || (resource = {}));
 var resource;
@@ -213,18 +213,21 @@ var resource;
         };
         Resource.defaultToJSON = function () {
             var _this = this;
-            var json = {};
-            Object.keys(this).forEach(function (key) {
-                if (!_this.hasOwnProperty(key))
-                    return;
+            var keys = [];
+            // Corresponding to the getter/setter.
+            for (var key in this)
+                keys.push(key);
+            return keys.reduce(function (json, key) {
                 if (key === 'promise' || key === 'resolved')
-                    return;
+                    return json;
+                if (_this[key] instanceof Function)
+                    return json;
                 json[key] = _this[key];
-            });
-            return json;
+                return json;
+            }, {});
         };
         return Resource;
-    })();
+    }());
     resource_1.Resource = Resource;
 })(resource || (resource = {}));
 /// <reference path="Resource.ts" />
@@ -340,6 +343,6 @@ var resource;
                 .replace(/%2B/gi, '+');
         };
         return Router;
-    })();
+    }());
     resource.Router = Router;
 })(resource || (resource = {}));

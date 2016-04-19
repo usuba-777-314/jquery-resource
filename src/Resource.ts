@@ -15,17 +15,15 @@ module resource {
     };
 
     static defaultToJSON: () => {} = function() {
-
-      var json = {};
-
-      Object.keys(this).forEach((key: string) => {
-
-        if (!this.hasOwnProperty(key)) return;
-        if (key === 'promise' || key === 'resolved') return;
+      var keys = [];
+      // Corresponding to the getter/setter.
+      for (var key in this) keys.push(key);
+      return keys.reduce((json: {}, key :string) => {
+        if (key === 'promise' || key === 'resolved') return json;
+        if (this[key] instanceof Function) return json;
         json[key] = this[key];
-      });
-
-      return json;
+        return json;
+      }, {});
     };
 
     modelClass: IModelClass<T>;
@@ -82,8 +80,7 @@ module resource {
      * @method initConstructor コンストラクタを初期化する。
      */
     initConstructor() {
-
-      Object.defineProperty(this.modelClass, 'constructor', {
+      Object.defineProperty(this.modelClass, 'constructor', <PropertyDescriptor>{
         value: (params?: any) => this.generateModel(params),
         enumerable: false,
         writable: true,
